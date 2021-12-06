@@ -1,0 +1,472 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+  creationTimestamp: null
+  name: clusters.metakube.metakube.jet.crossplane.io
+spec:
+  group: metakube.metakube.jet.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - metakubejet
+    kind: Cluster
+    listKind: ClusterList
+    plural: clusters
+    singular: cluster
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Cluster is the Schema for the Clusters API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ClusterSpec defines the desired state of Cluster
+            properties:
+              deletionPolicy:
+                default: Delete
+                description: DeletionPolicy specifies what will happen to the underlying
+                  external when this managed resource is deleted - either "Delete"
+                  or "Orphan" the external resource.
+                enum:
+                - Orphan
+                - Delete
+                type: string
+              forProvider:
+                properties:
+                  dcName:
+                    description: Data center name
+                    type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: Labels added to cluster
+                    type: object
+                  projectId:
+                    description: Reference project identifier
+                    type: string
+                  spec:
+                    description: Cluster specification
+                    items:
+                      properties:
+                        auditLogging:
+                          description: Whether to enable audit logging or not
+                          type: boolean
+                        cloud:
+                          description: Cloud provider specification
+                          items:
+                            properties:
+                              aws:
+                                description: AWS cluster specification
+                                items:
+                                  properties:
+                                    accessKeyIdSecretRef:
+                                      description: Access key identifier
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                    instanceProfileName:
+                                      description: Instance profile name
+                                      type: string
+                                    openstackBillingTenant:
+                                      description: Openstack tenant/project name for
+                                        the account
+                                      type: string
+                                    roleArn:
+                                      description: The IAM role the control plane
+                                        will use over assume-role
+                                      type: string
+                                    routeTableId:
+                                      description: Route table identifier
+                                      type: string
+                                    secretAccessKeySecretRef:
+                                      description: Secret access key
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                    securityGroupId:
+                                      description: Security group identifier
+                                      type: string
+                                    vpcId:
+                                      description: Virtual private cloud identifier
+                                      type: string
+                                  required:
+                                  - accessKeyIdSecretRef
+                                  - openstackBillingTenant
+                                  - secretAccessKeySecretRef
+                                  - vpcId
+                                  type: object
+                                type: array
+                              azure:
+                                description: Azire cluster specification
+                                items:
+                                  properties:
+                                    availabilitySet:
+                                      type: string
+                                    clientId:
+                                      type: string
+                                    clientSecretSecretRef:
+                                      description: A SecretKeySelector is a reference
+                                        to a secret key in an arbitrary namespace.
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                    openstackBillingTenant:
+                                      description: Openstack tenant/project name for
+                                        the account
+                                      type: string
+                                    resourceGroup:
+                                      type: string
+                                    routeTable:
+                                      type: string
+                                    securityGroup:
+                                      type: string
+                                    subnet:
+                                      type: string
+                                    subscriptionId:
+                                      type: string
+                                    tenantId:
+                                      type: string
+                                    vnet:
+                                      type: string
+                                  required:
+                                  - clientId
+                                  - clientSecretSecretRef
+                                  - openstackBillingTenant
+                                  - subscriptionId
+                                  - tenantId
+                                  type: object
+                                type: array
+                              openstack:
+                                description: OpenStack cluster specification
+                                items:
+                                  properties:
+                                    applicationCredentialsId:
+                                      description: Openstack application credentials
+                                        ID
+                                      type: string
+                                    applicationCredentialsSecretSecretRef:
+                                      description: Openstack application credentials
+                                        secret
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                    floatingIpPool:
+                                      description: The floating ip pool used by all
+                                        worker nodes to receive a public ip
+                                      type: string
+                                    network:
+                                      description: When specified, all worker nodes
+                                        will be attached to this network. If not specified,
+                                        a network, subnet & router will be created.
+                                      type: string
+                                    passwordSecretRef:
+                                      description: The openstack account's password
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                    securityGroup:
+                                      description: When specified, all worker nodes
+                                        will be attached to this security group. If
+                                        not specified, a security group will be created
+                                      type: string
+                                    subnetCidr:
+                                      description: 'Change this to configure a different
+                                        internal IP range for Nodes. Default: 192.168.1.0/24'
+                                      type: string
+                                    subnetId:
+                                      description: When specified, all worker nodes
+                                        will be attached to this subnet of specified
+                                        network. If not specified, a network, subnet
+                                        & router will be created.
+                                      type: string
+                                    tenant:
+                                      description: The opestack project to use for
+                                        billing
+                                      type: string
+                                    usernameSecretRef:
+                                      description: The openstack account's username
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        domainName:
+                          description: Internal IP range for ClusterIP Pods
+                          type: string
+                        enableSshAgent:
+                          description: SSH Agent as a daemon running on each node
+                            that can manage ssh keys. Disable it if you want to manage
+                            keys manually
+                          type: boolean
+                        machineNetworks:
+                          description: Machine networks optionally specifies the parameters
+                            for IPAM
+                          items:
+                            properties:
+                              cidr:
+                                description: Network CIDR
+                                type: string
+                              dnsServers:
+                                description: DNS servers
+                                items:
+                                  type: string
+                                type: array
+                              gateway:
+                                description: Network gateway
+                                type: string
+                            type: object
+                          type: array
+                        podNodeSelector:
+                          description: Configure PodNodeSelector admission plugin
+                            at the apiserver
+                          type: boolean
+                        podSecurityPolicy:
+                          description: Pod security policies allow detailed authorization
+                            of pod creation and updates
+                          type: boolean
+                        podsCidr:
+                          description: Internal IP range for Pods
+                          type: string
+                        servicesCidr:
+                          description: Internal IP range for ClusterIP Services
+                          type: string
+                        updateWindow:
+                          description: Flatcar nodes reboot window
+                          items:
+                            properties:
+                              length:
+                                description: Node reboot window duration
+                                type: string
+                              start:
+                                description: Node reboot window start time
+                                type: string
+                            required:
+                            - length
+                            - start
+                            type: object
+                          type: array
+                        version:
+                          description: Cloud orchestrator version, either Kubernetes
+                            or OpenShift
+                          type: string
+                      required:
+                      - cloud
+                      - version
+                      type: object
+                    type: array
+                  sshkeys:
+                    description: SSH keys attached to nodes
+                    items:
+                      type: string
+                    type: array
+                required:
+                - dcName
+                - projectId
+                - spec
+                type: object
+              providerConfigRef:
+                default:
+                  name: default
+                description: ProviderConfigReference specifies how the provider that
+                  will be used to create, observe, update, and delete this managed
+                  resource should be configured.
+                properties:
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                required:
+                - name
+                type: object
+              providerRef:
+                description: 'ProviderReference specifies the provider that will be
+                  used to create, observe, update, and delete this managed resource.
+                  Deprecated: Please use ProviderConfigReference, i.e. `providerConfigRef`'
+                properties:
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                required:
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: WriteConnectionSecretToReference specifies the namespace
+                  and name of a Secret to which any connection details for this managed
+                  resource should be written. Connection details frequently include
+                  the endpoint, username, and password required to connect to the
+                  managed resource.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                  namespace:
+                    description: Namespace of the secret.
+                    type: string
+                required:
+                - name
+                - namespace
+                type: object
+            required:
+            - forProvider
+            type: object
+          status:
+            description: ClusterStatus defines the observed state of Cluster.
+            properties:
+              atProvider:
+                properties:
+                  creationTimestamp:
+                    type: string
+                  deletionTimestamp:
+                    type: string
+                  kubeConfig:
+                    type: string
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time this condition
+                        transitioned from one status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A Message containing details about this condition's
+                        last transition from one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: Type of this condition. At most one of each condition
+                        type may apply to a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

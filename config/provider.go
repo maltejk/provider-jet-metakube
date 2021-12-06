@@ -22,8 +22,8 @@ import (
 )
 
 const (
-	resourcePrefix = "template"
-	modulePath     = "github.com/crossplane-contrib/provider-jet-template"
+	resourcePrefix = "metakube"
+	modulePath     = "github.com/crossplane-contrib/provider-jet-metakube"
 )
 
 // GetProvider returns provider configuration
@@ -35,8 +35,11 @@ func GetProvider(resourceMap map[string]*schema.Resource) *tjconfig.Provider {
 		return r
 	}
 
-	pc := tjconfig.NewProvider(resourceMap, resourcePrefix, modulePath,
-		tjconfig.WithDefaultResourceFn(defaultResourceFn))
+pc := tjconfig.NewProvider(resourceMap, resourcePrefix, modulePath,
+    tjconfig.WithDefaultResourceFn(defaultResourceFn),
+    tjconfig.WithIncludeList([]string{
+        "cluster$",
+    }))
 
 	for _, configure := range []func(provider *tjconfig.Provider){
 		// add custom config functions
